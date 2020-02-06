@@ -1,6 +1,6 @@
 <? 
 /*
-	Copyright (C) 2013-2016 xtr4nge [_AT_] gmail.com
+	Copyright (C) 2013-2020 xtr4nge [_AT_] gmail.com
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>FruityWifi</title>
+<title>FruityWifi : Karma</title>
 <script src="../js/jquery.js"></script>
 <script src="../js/jquery-ui.js"></script>
 <link rel="stylesheet" href="../css/jquery-ui.css" />
@@ -50,7 +50,7 @@ include "../../functions.php";
 
 // Checking POST & GET variables...
 if ($regex == 1) {
-	regex_standard($_POST["newdata"], "msg.php", $regex_extra);
+    regex_standard($_POST["newdata"], "msg.php", $regex_extra);
     regex_standard($_GET["logfile"], "msg.php", $regex_extra);
     regex_standard($_GET["action"], "msg.php", $regex_extra);
     regex_standard($_POST["service"], "msg.php", $regex_extra);
@@ -65,7 +65,6 @@ $service = $_POST["service"];
 // DELETE LOG
 if ($logfile != "" and $action == "delete") {
     $exec = "$bin_rm ".$mod_logs_history.$logfile.".log";
-    //exec("$bin_danger \"$exec\"", $dump); //DEPRECATED
     exec_fruitywifi($exec);
 }
 
@@ -76,19 +75,19 @@ if ($logfile != "" and $action == "delete") {
 
     &nbsp;version <?=$mod_version?><br>
     <? 
-    if (file_exists("includes/hostapd_cli")) { 
-        echo "&nbsp;&nbsp; $mod_alias <font style='color:lime'>installed</font><br>";
+    if (file_exists($bin_hostapd_cli)) { 
+        echo "&nbsp; $mod_alias <font style='color:lime'>installed</font><br>";
     } else {
-		echo "&nbsp;&nbsp; $mod_alias <a href='includes/module_action.php?install=install_$mod_name' style='color:red'>install</a><br>";
+	echo "&nbsp; $mod_alias <a href='includes/module_action.php?install=install_$mod_name' style='color:red'>install</a><br>";
     } 
     ?>
     
     <?
-    $ismoduleup = exec("$mod_isup");
+    $ismoduleup = exec($mod_isup);
     if ($ismoduleup != "") {
-        echo "&nbsp;&nbsp; $mod_alias  <font color=\"lime\"><b>enabled</b></font>.&nbsp; | <a href=\"includes/module_action.php?service=responder&action=stop&page=module\"><b>stop</b></a>";
+        echo "&nbsp; $mod_alias  <font color='lime'><b>enabled</b></font>.&nbsp; | <a href='includes/module_action.php?service=karma&action=stop&page=module'><b>stop</b></a>";
     } else { 
-        echo "&nbsp;&nbsp; $mod_alias  <font color=\"red\"><b>disabled</b></font>. | <a href=\"includes/module_action.php?service=responder&action=start&page=module\"><b>start</b></a>"; 
+        echo "&nbsp; $mod_alias  <font color='red'><b>disabled</b></font>. | <a href='includes/module_action.php?service=karma&action=start&page=module'><b>start</b></a>"; 
     }
     ?>
 
@@ -108,7 +107,7 @@ Loading, please wait...
         <ul>
             <li><a href="#result-1">Output</a></li>
             <li><a href="#result-2">History</a></li>
-			<li><a href="#result-3">About</a></li>
+	    <li><a href="#result-3">About</a></li>
         </ul>
         
         <!-- OUTPUT -->
@@ -125,11 +124,7 @@ Loading, please wait...
                 }
             
                 $data = open_file($filename);
-                
-                // REVERSE
-                //$data_array = explode("\n", $data);
-                //$data = implode("\n",array_reverse($data_array));
-                
+                                
             ?>
             <textarea id="output" class="module-content" style="font-family: courier;"><?=htmlspecialchars($data)?></textarea>
             <input type="hidden" name="type" value="logs">
