@@ -1,53 +1,59 @@
 #!/bin/bash
-
+echo
 echo "installing Hostapd/Karma Dependencies..."
-# DEP HOSTAPD-KARMA
+echo 
+
 apt-get -y install gcc-4.7
 apt-get -y install g++-4.7
 update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.7 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.7
-
 apt-get -y install hostapd
 apt-get -y install libnl1 libnl-dev libssl-dev
 
-echo "installing Hostapd/Karma..."
-# INSTALL HOSTAPD-KARMA
-#wget http://www.digininja.org/files/hostapd-1.0-karma.tar.bz2 -O hostapd-1.0-karma.tar.bz2
+echo
+echo "Getting Hostapd/Karma..."
+echo
 
-#bunzip2 hostapd-1.0-karma.tar.bz2
-#tar xvf hostapd-1.0-karma.tar
-#cd hostapd-1.0-karma/hostapd
-#make
+git clone https://github.com/xtr4nge/hostapd-karma
 
-wget https://github.com/xtr4nge/hostapd-karma/archive/master.zip -O hostapd-karma.zip
-
-unzip hostapd-karma.zip
-
-cmd=`lsb_release -c |grep -iEe "jessie|kali|sana"`
-if [[ ! -z $cmd ]]
-then
     echo "--------------------------------"
-    echo "ADDING: CONFIG_LIBNL32=y (Debian Jessie|Kali patch)"
+    echo "ADDING: CONFIG_LIBNL32=y / SLL TLS patch)"
     echo "--------------------------------"
     
     apt-get -y install libnl-3-dev libnl-genl-3-dev
     
     EXEC="s,^#CFLAGS += -I/usr/include/libnl3,CFLAGS += -I/usr/include/libnl3,g"
-    sed -i "$EXEC" hostapd-karma-master/hostapd/.config
+    sed -i "$EXEC" hostapd-karma/hostapd/.config
     
     EXEC="s,^#CONFIG_LIBNL32=y,CONFIG_LIBNL32=y,g"
-    sed -i "$EXEC" hostapd-karma-master/hostapd/.config
+    sed -i "$EXEC" hostapd-karma/hostapd/.config
+
+    EXEC="s,^#CONFIG_TLS=openssl,CONFIG_TLS=none,g"
+    sed -i "$EXEC" hostapd-karma/hostapd/.config
+
     
-    echo "[setup completed]"
+    echo "[Patching completed]"
     echo
 
-fi
+echo
+echo "Building Hostapd/Karma..."
+echo
 
-cd hostapd-karma-master/hostapd
+cd hostapd-karma/hostapd
 make
 
-
+echo 
+echo "Copying Hostapd/Karma..."
+echo 
 cp hostapd ../../
 cp hostapd_cli ../../
+
+echo 
+echo "Cleaning Up..."
+echo
+
+cd..
+cd..
+rm -r hostapd-karma
 
 echo "..DONE.."
 exit
